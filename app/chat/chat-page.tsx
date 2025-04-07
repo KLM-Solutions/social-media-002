@@ -3,13 +3,14 @@
 import { useChat } from 'ai/react';
 import DynamicComponentRender from './dynamic-render';
 import { Message, ToolInvocation } from 'ai';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { type Message as AiMessage } from 'ai/react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Send } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { MessageFormatter } from './message-formatter';
+import { SocialMediaAnimation } from './social-media-animation';
 
 interface ComponentData {
   name: string;
@@ -41,7 +42,7 @@ interface ExtendedMessage extends Omit<AiMessage, 'parts'> {
 }
 
 export default function ChatPage() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: '/api/chat',
     sendExtraMessageFields: true,
     maxSteps: 25,
@@ -50,6 +51,10 @@ export default function ChatPage() {
   return (
     <div className="p-4 h-screen">
       <div className="max-w-3xl mx-auto">
+        {messages.length === 0 && (
+          <SocialMediaAnimation />
+        )}
+        
         {messages.map((message: ExtendedMessage) => {
           const extendedMessage = message as unknown as ExtendedMessage;
           
@@ -136,6 +141,21 @@ export default function ChatPage() {
             </div>
           );
         })}
+        
+        {isLoading && (
+          <div className="flex justify-start mt-4">
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center space-x-2 animate-pulse">
+              <div className="w-8 h-8 relative">
+                <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce ml-1" style={{ animationDelay: '300ms' }}></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce ml-1" style={{ animationDelay: '600ms' }}></div>
+                </div>
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">AI is thinking...</span>
+            </div>
+          </div>
+        )}
       </div>
       
       <div className="fixed bottom-8 left-0 right-0 px-4 z-10">
@@ -147,9 +167,15 @@ export default function ChatPage() {
                 value={input}
                 onChange={handleInputChange}
                 placeholder="Type your message..."
+                disabled={isLoading}
               />
             </div>
-            <Button type="submit" variant="default" className="rounded-full px-4">
+            <Button 
+              type="submit" 
+              variant="default" 
+              className="rounded-full px-4"
+              disabled={isLoading}
+            >
               <Send className="h-4 w-4" />
             </Button>
           </form>
