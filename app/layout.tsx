@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VeyraX Quickstart",
-  description: "VeyraX Quickstart with AI SDK",
+  title: "Social Media Assistant",
+  description: "Social Media Assistant",
 };
 
 export default function RootLayout({
