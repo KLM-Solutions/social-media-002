@@ -10,7 +10,7 @@ const { messages } = await request.json();
 const toolsDescription = await getTools();
 
   const result = streamText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-4o-mini'),
     system: `You are a helpful assistant. You're doing things step by step. First you explain what you're going to do. Then you do it and conclude.
 
     Available tools: ${String(toolsDescription)}.`,
